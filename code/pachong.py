@@ -70,7 +70,7 @@ def dowmloadPicture(html, keyword):
             print('错误，当前图片无法下载')
             continue
         else:
-            string = file + r'\\' + keyword + '_' + str(num) + '.jpg'
+            string = 'img' + r'\\' + keyword + '_' + str(num) + '.jpg'
             fp = open(string, 'wb')
             fp.write(pic.content)
             fp.close()
@@ -107,12 +107,13 @@ if __name__ == '__main__':  # 主函数入口
         tot = Find(url,A)
         Recommend = recommend(url)  # 记录相关推荐
         print('经过检测%s类图片共有%d张' % (word, tot))
-        file = word + '文件'
+        # file = word + '文件'
+        file = 'img'
         y = os.path.exists(file)
         if y == 1:
-            print('该文件已存在，请重新输入')
-            file = word+'文件夹2'
-            os.mkdir(file)
+            print('该文件已存在')
+            # file = word+'文件夹2'
+            # os.mkdir(file)
         else:
             os.mkdir(file)
         t = 0

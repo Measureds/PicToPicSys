@@ -1,4 +1,4 @@
-/./code/depth//
-/./code/img//
-/./result//
+./code/depth/
+./code/img/
+./result/
 *.pth

@@ -11,27 +11,17 @@ class Solver(object):
         self.net = network.Net().cuda()
 
     def threshold(self,i):
-        if i>0.1:
+        if i>0.5:
             return 1
         return i
 
     def image_multiply(self, original, mask):
-        # original = original.permute(0,2,3,1).cpu()
-        # pred = original[0]
-        # print(mask.shape)
-        # print(pred.shape)
 
         for i in range (223):
             for j in range(223):
                 original[i][j][0] *= self.threshold(mask[i][j][0])
-                # mask[i][j][0] *= pred[0][i][j]
                 original[i][j][1] *=self.threshold(mask[i][j][0])
-                # mask[i][j][0] *= pred[1][i][j]
                 original[i][j][2] *=self.threshold(mask[i][j][0])
-                # mask[i][j][0] *= pred[2][i][j]
-        # pred = np.resize(pred,(3,224,224,1))
-        #  pred = pred.permute(1,2,0)
-        # pred = pred.transpose(0,1).transpose(1,2)
         return original
         
     def test(self, ckpt_path, test_roots, batch_size, test_thread_num, save_base):
@@ -92,21 +82,11 @@ class Solver(object):
                     batch_path_list = [join(save_base, name +'.jpg'.format(i=i)) for name in names]
                     for j in range(len(batch_path_list)):
                         pred_path = batch_path_list[j]
-                        # pred = batch_preds[j] * 255
-                        # print(batch_preds[j].shape)
-                        # print(pred.shape)
-                        # print(np.array(pred))
+                        
+                        origin = pred_path.replace("result","img")
+                        print(origin)
+                        img_org = cv2.imread(origin,cv2.IMREAD_COLOR)
 
-                        print(batch_preds[j][110][110])
-                        # preds = self.image_multiply(img, batch_preds[j])
-                        # print(preds.shape)
-                        # preds = preds*200
-                        img_test = cv2.imread("./img/1.jpg",cv2.IMREAD_COLOR)
-                        img_test = cv2.resize(img_test,(224,224))
-                        print(img_test.shape)
-                        preds = self.image_multiply(img_test, batch_preds[j])
-                        # img = img.permute(0,2,3,1).cpu()
-                        # print(np.array(preds))
-                        # image__ = np.array(img.cpu())
-                        # print(image__.shape)
+                        img_org = cv2.resize(img_org,(224,224))
+                        preds = self.image_multiply(img_org, batch_preds[j])
                         cv2.imwrite(filename=pred_path, img=np.array(preds))
