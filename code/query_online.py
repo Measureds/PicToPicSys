@@ -70,7 +70,8 @@ while True:
         global index_t
         index_t = 1
         queryDir = url_is_correct(index_t)
-        queryImg = mpimg.imread(queryDir)
+        queryDir_r = queryDir.replace("result","img")
+        queryImg = mpimg.imread(queryDir_r)
         x=0
         ax[x][x].set_title('Test-Image',fontsize=10)
         ax[x][x].imshow(queryImg,cmap=plt.cm.gray)

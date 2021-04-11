@@ -1,2 +1,2 @@
-py index.py -database result -index lol.h5
-py query_online.py 
+python38 index.py -database result -index hsq.h5
+python38 query_online.py 

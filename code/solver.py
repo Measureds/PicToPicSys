@@ -11,9 +11,9 @@ class Solver(object):
         self.net = network.Net().cuda()
 
     def threshold(self,i):
-        if i>0.5:
+        if i>0.7:
             return 1
-        return i
+        return 0
 
     def image_multiply(self, original, mask):
 
@@ -23,6 +23,37 @@ class Solver(object):
                 original[i][j][1] *=self.threshold(mask[i][j][0])
                 original[i][j][2] *=self.threshold(mask[i][j][0])
         return original
+
+    def image_crop(self, img):
+        left = 0
+        right = 0
+        top = 0
+        bottom = 0
+        flag_first = False
+        for i in range (223):
+            for j in range(223):
+                if ((img[i][j][0] != 0) or (img[i][j][1] != 0) or (img[i][j][2] != 0)) and (flag_first == False) :
+                    top = i
+                    bottom = i
+                    left = j
+                    right = j
+                    flag_first = True
+                elif ((img[i][j][0] != 0) or (img[i][j][1] != 0) or (img[i][j][2] != 0)) :
+                    if j < left:
+                        left = j
+                    if j > right:
+                        right = j
+                    if i > bottom:
+                        bottom = i
+        height = bottom - top
+        width = right - left
+        print(left)
+        print(right)
+        print(top)
+        print(bottom)
+        image_clip = img[int(top):(int(top) + int(height)), int(left):(int(left) + int(width))]
+        return image_clip
+                    
         
     def test(self, ckpt_path, test_roots, batch_size, test_thread_num, save_base):
         with torch.no_grad():
@@ -89,4 +120,6 @@ class Solver(object):
 
                         img_org = cv2.resize(img_org,(224,224))
                         preds = self.image_multiply(img_org, batch_preds[j])
+                        preds = self.image_crop(preds)
+                        preds = cv2.resize(preds,(224,224))
                         cv2.imwrite(filename=pred_path, img=np.array(preds))
